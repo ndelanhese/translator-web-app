@@ -6,20 +6,41 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "bun vitest run",
+    "test:watch": "bun vitest",
+    "postinstall": "lefthook install"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.1.0"
+    "happy-dom": "13.3.8",
+    "next": "14.1.0",
+    "react": "18",
+    "react-dom": "18"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0"
+    "@biomejs/biome": "1.5.3",
+    "@commitlint/cli": "18.6.1",
+    "@commitlint/config-conventional": "18.6.2",
+    "@faker-js/faker": "8.4.1",
+    "@testing-library/jest-dom": "6.4.2",
+    "@testing-library/react": "14.2.1",
+    "@types/bun": "latest",
+    "@types/node": "20",
+    "@types/react": "18",
+    "@types/react-dom": "18",
+    "@vitejs/plugin-react": "4.2.1",
+    "autoprefixer": "10.4.17",
+    "commitizen": "4.3.0",
+    "commitlint": "18.6.1",
+    "cspell": "8.3.2",
+    "cspell-dict-pt-br": "1.1.1",
+    "lefthook": "1.6.1",
+    "postcss": "8",
+    "tailwindcss": "3.4.1",
+    "vite-tsconfig-paths": "4.3.1",
+    "vitest": "1.3.0"
+  },
+  "peerDependencies": {
+    "typescript": "5.0.0"
   }
 }
