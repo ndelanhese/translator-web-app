@@ -1,0 +1,13 @@
+import { languages } from "./select";
+
+export type SelectProps = {
+	searchParamKey: string;
+	defaultValue?: string;
+};
+
+export type Language = (typeof languages)[number];
+
+export type LanguageObject = {
+	value: Language;
+	label: string;
+};
