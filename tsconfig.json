@@ -25,6 +25,12 @@
       }
     ],
     "paths": {
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@env": [
+        "./src/env/index.ts"
+      ],
       "@/*": [
         "./src/*"
       ]

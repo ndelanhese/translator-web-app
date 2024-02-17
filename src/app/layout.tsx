@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@components/theme-provider";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
@@ -21,12 +22,17 @@ const RootLayout = ({
 	return (
 		<html lang="pt-BR">
 			<body
-				className={cn(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable,
-				)}
+				className={cn("min-h-screen font-sans antialiased", fontSans.variable)}
 			>
-				{children}
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="dark"
+					enableSystem
+					disableTransitionOnChange
+					storageKey="translator-app-theme"
+				>
+					{children}
+				</ThemeProvider>
 			</body>
 		</html>
 	);
