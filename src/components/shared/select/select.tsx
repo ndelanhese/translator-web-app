@@ -44,7 +44,12 @@ export const languages = [
 	"SWEDISH",
 ] as const;
 
-export const Select = ({ searchParamKey, defaultValue }: SelectProps) => {
+export const Select = ({
+	searchParamKey,
+	defaultValue,
+	disabled = false,
+	onValueChangeCallback,
+}: SelectProps) => {
 	const { entries } = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -61,7 +66,7 @@ export const Select = ({ searchParamKey, defaultValue }: SelectProps) => {
 		[],
 	);
 
-	const handleUpdateLanguage = (languageInput: string) => {
+	const handleUpdateLanguage = async (languageInput: string) => {
 		const current = new URLSearchParams(Array.from(entries()));
 
 		const lowerCaseLanguageInput = languageInput.toLowerCase();
@@ -71,6 +76,10 @@ export const Select = ({ searchParamKey, defaultValue }: SelectProps) => {
 		const search = current.toString();
 		const query = search ? `?${search}` : "";
 
+		{
+			onValueChangeCallback && (await onValueChangeCallback());
+		}
+
 		router.push(`${pathname}${query}`);
 	};
 
@@ -78,6 +87,7 @@ export const Select = ({ searchParamKey, defaultValue }: SelectProps) => {
 		<ShadCnSelect
 			defaultValue={defaultValue}
 			onValueChange={handleUpdateLanguage}
+			disabled={disabled}
 		>
 			<SelectTrigger className="w-[17.5rem]">
 				<SelectValue placeholder="Select a language" />

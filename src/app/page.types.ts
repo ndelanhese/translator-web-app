@@ -4,3 +4,7 @@ export type HomePageProps = {
 		text_to?: string | null;
 	};
 };
+
+export type TranslateResponse = {
+	result: string;
+};
