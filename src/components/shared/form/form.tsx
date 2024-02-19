@@ -15,7 +15,6 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 	const langFrom = getSearchParam("text_from") ?? "portuguese";
 	const langTo = getSearchParam("text_to") ?? "english";
 
-	const [currentText, setCurrentText] = useState<string | undefined>(undefined);
 	const [translatedText, setTranslatedText] = useState<string | undefined>(
 		undefined,
 	);
@@ -78,7 +77,7 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 			return;
 		}
 
-		setCurrentText(translatedText);
+		textFromRef.current.value = translatedText ?? "";
 		setTranslatedText(textFromCurrent);
 	}, [langFrom, langTo, pathname, entries, router, translatedText]);
 
@@ -94,7 +93,6 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 					placeholder={`Type your ${langFrom.toLowerCase()} text here.`}
 					handleChangeValue={handleChangeInputValue}
 					ref={textFromRef}
-					value={currentText}
 				>
 					<Select
 						searchParamKey="text_from"
