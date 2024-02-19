@@ -9,7 +9,11 @@ import {
 } from "@/components/ui/select";
 import { nanoid } from "nanoid";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { LanguageObject, SelectProps } from "./select.types";
+import {
+	LanguageObject,
+	SearchParamKeyEnum,
+	SelectProps,
+} from "./select.types";
 
 export const languages = [
 	"PERSIAN",
@@ -76,9 +80,12 @@ export const Select = ({
 		const search = current.toString();
 		const query = search ? `?${search}` : "";
 
-		await onValueChangeCallback?.();
-
 		router.push(`${pathname}${query}`);
+
+		await onValueChangeCallback?.({
+			searchParamKey: searchParamKey as SearchParamKeyEnum,
+			language: languageInput,
+		});
 	};
 
 	return (

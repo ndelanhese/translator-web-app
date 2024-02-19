@@ -2,10 +2,16 @@
 
 import { Select } from "@components/shared/select";
 import { TextArea } from "@components/shared/text-area";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
-import { FormProps } from "./form.types";
+import { FormProps, HandleChangeLanguageProps } from "./form.types";
 
-export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
+export const Form = ({ handleTranslateText }: FormProps) => {
+	const { get: getSearchParam } = useSearchParams();
+
+	const langFrom = getSearchParam("text_from") ?? "portuguese";
+	const langTo = getSearchParam("text_to") ?? "english";
+
 	const [translatedText, setTranslatedText] = useState<string | undefined>(
 		undefined,
 	);
@@ -16,30 +22,39 @@ export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
 	const handleChangeInputValue = useCallback(
 		async (value: string) => {
 			setIsTranslating(true);
-			const response = await handleTranslateText(value, textFrom, textTo);
+			const response = await handleTranslateText(value, langFrom, langTo);
 			setTranslatedText(response?.result);
 			setIsTranslating(false);
 		},
-		[textFrom, textTo, handleTranslateText],
+		[langFrom, langTo, handleTranslateText],
 	);
 
-	const handleLanguageChange = useCallback(async () => {
-		setIsTranslating(true);
-		const textFromCurrent = textFromRef?.current?.value;
+	const handleLanguageChange = useCallback(
+		async ({ language, searchParamKey }: HandleChangeLanguageProps) => {
+			setIsTranslating(true);
+			const textFromCurrent = textFromRef?.current?.value;
 
-		if (!textFromCurrent) {
+			if (!textFromCurrent) {
+				setIsTranslating(false);
+				return;
+			}
+
+			const translateTextProps = {
+				text_from: textFromCurrent,
+				lang_from: searchParamKey === "text_from" ? language : langFrom,
+				lang_to: searchParamKey === "text_to" ? language : langTo,
+			};
+
+			const response = await handleTranslateText(
+				translateTextProps.text_from,
+				translateTextProps.lang_from,
+				translateTextProps.lang_to,
+			);
+			setTranslatedText(response?.result);
 			setIsTranslating(false);
-			return;
-		}
-
-		const response = await handleTranslateText(
-			textFromCurrent,
-			textFrom,
-			textTo,
-		);
-		setTranslatedText(response?.result);
-		setIsTranslating(false);
-	}, [textFrom, textTo, handleTranslateText]);
+		},
+		[langFrom, langTo, handleTranslateText],
+	);
 
 	return (
 		<>
@@ -49,14 +64,14 @@ export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
 				</h1>
 				<TextArea
 					id="text-from"
-					label={`Your text in ${textFrom.toLowerCase()}:`}
-					placeholder={`Type your ${textFrom.toLowerCase()} text here.`}
+					label={`Your text in ${langFrom.toLowerCase()}:`}
+					placeholder={`Type your ${langFrom.toLowerCase()} text here.`}
 					handleChangeValue={handleChangeInputValue}
 					ref={textFromRef}
 				>
 					<Select
 						searchParamKey="text_from"
-						defaultValue={textFrom.toUpperCase()}
+						defaultValue={langFrom.toUpperCase()}
 						disabled={isTranslating}
 						onValueChangeCallback={handleLanguageChange}
 					/>
@@ -68,16 +83,16 @@ export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
 				</h1>
 				<TextArea
 					id="text-to"
-					label={`Your ${textTo.toLowerCase()} text is:`}
+					label={`Your ${langTo.toLowerCase()} text is:`}
 					className="bg-zinc-800"
 					readOnly
-					placeholder={`Your text in ${textTo.toLowerCase()} will appear here.`}
+					placeholder={`Your text in ${langTo.toLowerCase()} will appear here.`}
 					value={translatedText}
 					isLoading={isTranslating}
 				>
 					<Select
 						searchParamKey="text_to"
-						defaultValue={textTo.toUpperCase()}
+						defaultValue={langTo.toUpperCase()}
 						disabled={isTranslating}
 						onValueChangeCallback={handleLanguageChange}
 					/>
