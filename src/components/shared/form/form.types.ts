@@ -7,3 +7,8 @@ export type FormProps = {
 		langTo: string,
 	) => Promise<{ result: string } | undefined>;
 };
+
+export type HandleChangeLanguageProps = {
+	searchParamKey: "text_from" | "text_to";
+	language: string;
+};
