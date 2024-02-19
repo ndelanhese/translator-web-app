@@ -90,8 +90,8 @@ export const Select = ({
 
 	return (
 		<ShadCnSelect
-			defaultValue={defaultValue}
 			onValueChange={handleUpdateLanguage}
+			value={defaultValue}
 			disabled={disabled}
 		>
 			<SelectTrigger className="w-[10.5rem]">

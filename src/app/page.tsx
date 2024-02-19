@@ -30,7 +30,7 @@ const Home = ({ searchParams }: HomePageProps) => {
 	};
 
 	return (
-		<main className="w-full bg-background h-screen grid sm:grid-cols-2 grid-cols-1 grid-rows-2 sm:grid-rows-1 sm:py-4 px-4 sm:px-0">
+		<main className="w-full bg-background h-screen flex flex-col sm:grid sm:grid-cols-2 grid-cols-1 grid-rows-2 sm:grid-rows-1 sm:py-4 px-4 sm:px-0">
 			<Form
 				handleTranslateText={handleTranslateText}
 				textFrom={textFrom}

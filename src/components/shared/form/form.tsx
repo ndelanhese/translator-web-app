@@ -2,16 +2,20 @@
 
 import { Select } from "@components/shared/select";
 import { TextArea } from "@components/shared/text-area";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
+import { SwitchLangButton } from "../switch-lang-button/switch-lang-button";
 import { FormProps, HandleChangeLanguageProps } from "./form.types";
 
 export const Form = ({ handleTranslateText }: FormProps) => {
-	const { get: getSearchParam } = useSearchParams();
+	const { get: getSearchParam, entries } = useSearchParams();
+	const router = useRouter();
+	const pathname = usePathname();
 
 	const langFrom = getSearchParam("text_from") ?? "portuguese";
 	const langTo = getSearchParam("text_to") ?? "english";
 
+	const [currentText, setCurrentText] = useState<string | undefined>(undefined);
 	const [translatedText, setTranslatedText] = useState<string | undefined>(
 		undefined,
 	);
@@ -56,9 +60,31 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 		[langFrom, langTo, handleTranslateText],
 	);
 
+	const handleSwitchLangs = useCallback(() => {
+		const current = new URLSearchParams(Array.from(entries()));
+
+		current.set("text_from", langTo);
+		current.set("text_to", langFrom);
+
+		const search = current.toString();
+		const query = search ? `?${search}` : "";
+
+		router.push(`${pathname}${query}`);
+
+		const textFromCurrent = textFromRef?.current?.value;
+
+		if (!textFromCurrent) {
+			setIsTranslating(false);
+			return;
+		}
+
+		setCurrentText(translatedText);
+		setTranslatedText(textFromCurrent);
+	}, [langFrom, langTo, pathname, entries, router, translatedText]);
+
 	return (
 		<>
-			<div className="flex flex-1 items-center justify-center border-b sm:border-b-0 sm:border-r px-2 py-4 flex-col gap-4 sm:gap-8">
+			<div className="flex flex-1 items-center justify-center sm:border-b-0 sm:border-r px-2 py-4 flex-col gap-4 sm:gap-8">
 				<h1 className="text-primary text-3xl tracking-tighter uppercase font-bold">
 					Original text
 				</h1>
@@ -68,6 +94,7 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 					placeholder={`Type your ${langFrom.toLowerCase()} text here.`}
 					handleChangeValue={handleChangeInputValue}
 					ref={textFromRef}
+					value={currentText}
 				>
 					<Select
 						searchParamKey="text_from"
@@ -77,6 +104,10 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 					/>
 				</TextArea>
 			</div>
+			<SwitchLangButton
+				onChange={handleSwitchLangs}
+				className="flex sm:hidden self-center"
+			/>
 			<div className="flex flex-1 items-center justify-center px-2 py-4 flex-col gap-4 sm:gap-8">
 				<h1 className="text-primary text-3xl tracking-tighter uppercase font-bold">
 					Translated text
@@ -98,6 +129,10 @@ export const Form = ({ handleTranslateText }: FormProps) => {
 					/>
 				</TextArea>
 			</div>
+			<SwitchLangButton
+				onChange={handleSwitchLangs}
+				className="hidden sm:absolute sm:flex"
+			/>
 		</>
 	);
 };
