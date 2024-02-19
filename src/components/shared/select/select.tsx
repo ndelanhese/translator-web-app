@@ -76,9 +76,7 @@ export const Select = ({
 		const search = current.toString();
 		const query = search ? `?${search}` : "";
 
-		{
-			onValueChangeCallback && (await onValueChangeCallback());
-		}
+		await onValueChangeCallback?.();
 
 		router.push(`${pathname}${query}`);
 	};
@@ -89,7 +87,7 @@ export const Select = ({
 			onValueChange={handleUpdateLanguage}
 			disabled={disabled}
 		>
-			<SelectTrigger className="w-[17.5rem]">
+			<SelectTrigger className="w-[10.5rem]">
 				<SelectValue placeholder="Select a language" />
 			</SelectTrigger>
 			<SelectContent>

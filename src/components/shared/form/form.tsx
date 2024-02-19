@@ -2,7 +2,7 @@
 
 import { Select } from "@components/shared/select";
 import { TextArea } from "@components/shared/text-area";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { FormProps } from "./form.types";
 
 export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
@@ -11,12 +11,35 @@ export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
 	);
 	const [isTranslating, setIsTranslating] = useState<boolean>(false);
 
-	const handleChangeInputValue = async (value: string) => {
+	const textFromRef = useRef<HTMLTextAreaElement>(null);
+
+	const handleChangeInputValue = useCallback(
+		async (value: string) => {
+			setIsTranslating(true);
+			const response = await handleTranslateText(value, textFrom, textTo);
+			setTranslatedText(response?.result);
+			setIsTranslating(false);
+		},
+		[textFrom, textTo, handleTranslateText],
+	);
+
+	const handleLanguageChange = useCallback(async () => {
 		setIsTranslating(true);
-		const response = await handleTranslateText(value, textFrom, textTo);
+		const textFromCurrent = textFromRef?.current?.value;
+
+		if (!textFromCurrent) {
+			setIsTranslating(false);
+			return;
+		}
+
+		const response = await handleTranslateText(
+			textFromCurrent,
+			textFrom,
+			textTo,
+		);
 		setTranslatedText(response?.result);
 		setIsTranslating(false);
-	};
+	}, [textFrom, textTo, handleTranslateText]);
 
 	return (
 		<>
@@ -29,11 +52,13 @@ export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
 					label={`Your text in ${textFrom.toLowerCase()}:`}
 					placeholder={`Type your ${textFrom.toLowerCase()} text here.`}
 					handleChangeValue={handleChangeInputValue}
+					ref={textFromRef}
 				>
 					<Select
 						searchParamKey="text_from"
 						defaultValue={textFrom.toUpperCase()}
 						disabled={isTranslating}
+						onValueChangeCallback={handleLanguageChange}
 					/>
 				</TextArea>
 			</div>
@@ -54,6 +79,7 @@ export const Form = ({ handleTranslateText, textFrom, textTo }: FormProps) => {
 						searchParamKey="text_to"
 						defaultValue={textTo.toUpperCase()}
 						disabled={isTranslating}
+						onValueChangeCallback={handleLanguageChange}
 					/>
 				</TextArea>
 			</div>
